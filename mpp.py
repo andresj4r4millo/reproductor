@@ -3,8 +3,6 @@ import shutil
 from mutagen.mp3 import MP3
 from pydub import AudioSegment
 
-#comentario
-#comentario 2
 
 ## con esto basta ´para conocer la duracion del archivo mp3
 #audio= MP3('archivo.mp3')
@@ -146,3 +144,4 @@ for mpp in os.listdir(carpetanoventa):
     shutil.move(ruta_archivo_origen, ruta_archivo_destino)
 
 
+#comentario final
