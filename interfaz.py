@@ -9,7 +9,7 @@ import mutagen
 
 #from mutagen.mp3 import MP3
 #pygame.mixer.pre_init(frequency=44100)
-
+#comentar
 pygame.mixer.init()
 pygame.mixer.init(frequency=44100)
 cancion_actual =''
@@ -107,12 +107,21 @@ def retroceder():
 
 def adelantar():
 	global pos, n
+    global actualizar
+    
+    if pos == n - 1:
+        pos = 0
+    else:
+        pos = pos + 1
+    cantidad['text'] = str(pos) + '/' + str(n)
+    
+    pygame.mixer.music.load(direcion[pos])
+    pygame.mixer.music.play()
+    pygame.mixer.music.set_pos(pygame.mixer.music.get_pos() + 5)  # Adelanta 5 segundos
+    
+    ventana.after_cancel(actualizar)
+    iniciar_reproduccion()
 
-	if pos == n-1:
-		pos = 0
-	else:
-		pos = pos + 1
-	cantidad['text'] = str(pos)+'/'+str(n)
 
 
 def detener_efecto():
