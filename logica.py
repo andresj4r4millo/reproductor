@@ -1,27 +1,18 @@
-from tkinter import Button, Label, Tk, filedialog, ttk, Frame, PhotoImage
-
-import pygame
-import random
-import mutagen
 import os
 import shutil
 
 carpeta_cargue='carpeta_cargue'
 carpeta_destino='carpeta_destino'
 
-def venta(cancion_actual, duracion):
+def venta(llamada_actual, duracion):
+    nombre_llamada =llamada_actual.split("/")
+    nombre_llamada = nombre_llamada[-1]
 
-    nombre_cancion =cancion_actual.split("/")
-    nombre_cancion = nombre_cancion[-1]
-
-    ruta_archivo_antes=os.path.join(carpeta_cargue, nombre_cancion)
-
+    ruta_archivo_antes=os.path.join(carpeta_cargue, nombre_llamada)
 
     nombre_audio , extencion =os.path.splitext(os.path.basename(ruta_archivo_antes))
 
     listan=nombre_audio.split("_")
-    
-
            
     numero=listan[3]
     ora=listan[4]
@@ -55,12 +46,12 @@ def venta(cancion_actual, duracion):
     ruta_archivo_destino = os.path.join(carpeta_destino, nuevo_nombre)
     shutil.move(ruta_archivo_despues, ruta_archivo_destino)
 
-def no_venta(cancion_actual, duracion):
+def no_venta(llamada_actual, duracion):
 
-    nombre_cancion =cancion_actual.split("/")
-    nombre_cancion = nombre_cancion[-1]
+    nombre_llamada =llamada_actual.split("/")
+    nombre_llamada = nombre_llamada[-1]
 
-    ruta_archivo_antes=os.path.join(carpeta_cargue, nombre_cancion)
+    ruta_archivo_antes=os.path.join(carpeta_cargue, nombre_llamada)
 
 
     nombre_audio , extencion =os.path.splitext(os.path.basename(ruta_archivo_antes))
