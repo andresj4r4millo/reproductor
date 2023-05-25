@@ -10,7 +10,7 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from logica import venta, no_venta
 import os
-carpeta_cargue = 'carpeta_cargue'
+carpeta_cargue = 'carpeta_cargue/'
 # from mutagen.mp3 import MP3
 # pygame.mixer.pre_init(frequency=44100)
 
@@ -38,13 +38,14 @@ def actualizar_etiqueta(etiqueta):
 
 
 def inicializacion():
-	global llamada_actual, pos
+	global llamada_actual, pos, carpeta_cargue
 	global archivos
 	pos = 0
 	archivos = os.listdir(carpeta_cargue)
 	for archivo in archivos:
 		if archivo.endswith(".mp3"):
-			llamada_actual = f"carpeta_cargue/{archivo}"
+			llamada_actual = f"{carpeta_cargue}{archivo}"
+			print(f"llamada_actual: {llamada_actual}")
 
 	# iniciar reproduccion automaticamente luego de abrir los archivos
 	pygame.mixer.music.load(llamada_actual)
@@ -94,10 +95,7 @@ def iniciar_reproduccion():
 	y = 0.5
 	pygame.mixer.music.set_volume(y)
 
-	print(llamada_actual)
-	return 
-
-	audio = mutagen.File(llamada_actual) 
+	audio = mutagen.File(f"{carpeta_cargue}{llamada_actual}") 
 	log = audio.info.length
 	minutos, segundos = divmod(log, 60)
 
