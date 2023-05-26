@@ -208,7 +208,7 @@ def fun_venta():
 
 def fun_no_venta():
     global archivo, duracion, archivos
-    
+
     no_venta(archivos, duracion)
     archivos[0].remove()
     stop()

@@ -80,7 +80,7 @@ def no_venta(archivos, duracion):
     hora=ora[0:2]+"-"+ora[2:4]+"-"+ora[4:6]
     fecha = numero[6:8] + "-" + numero[4:6] + "-" + numero[0:4]
     nuevo_nombre=f"{fecha}_{hora}_{duracion}_{cel}_{cedu}_{complemento}_{campaña}{extencion}"
-    ruta_archivo_despues=os.path.join(ruta_archivo_antes, ruta_archivo_antes)
+    ruta_archivo_despues=os.path.join(carpeta_cargue, nuevo_nombre)
     #renombrar
     os.rename(ruta_archivo_antes,ruta_archivo_despues)
     # enviar a carpeta exporte
