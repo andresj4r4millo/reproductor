@@ -199,16 +199,19 @@ def continuar():
 
 def fun_venta():
     global archivo, duracion, archivos
-    stop()
-    venta(archivo, duracion)
+
+    venta(archivos, duracion)
     archivos[0].remove()
+    stop()
+
 
 
 def fun_no_venta():
     global archivo, duracion, archivos
-    stop()
-    no_venta(archivo, duracion)
+    
+    no_venta(archivos, duracion)
     archivos[0].remove()
+    stop()
 
 
 """def modificar_tiempo_transcurrido(segundos):

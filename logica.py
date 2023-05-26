@@ -45,7 +45,8 @@ def venta(archivos, duracion):
     ruta_archivo_destino = os.path.join(carpeta_destino, nuevo_nombre)
     shutil.move(ruta_archivo_despues, ruta_archivo_destino)
 
-def no_venta(archivo, duracion):
+def no_venta(archivos, duracion):
+    archivo=archivos[0]
 
     ruta_archivo_antes=os.path.join(carpeta_cargue, archivo)
 
