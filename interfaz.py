@@ -29,8 +29,6 @@ duracion = ""
 
 
 # comandos - funciones
-
-
 def actualizar_etiqueta(etiqueta):
     global stime
     if not pygame.mixer.music.get_busy():
@@ -46,9 +44,9 @@ def inicializacion():
     global archivos, archivo
     pos = 0
     archivos = os.listdir(carpeta_cargue)
-    for archivo in archivos:
-        if archivo.endswith(".mp3"):
-            llamada_actual = f"{carpeta_cargue}/{archivo}"
+    archivo=archivos[0]
+    if archivo.endswith(".mp3"):
+        llamada_actual = archivo
             # print(f"llamada_actual: {llamada_actual}")
 
     # iniciar reproduccion automaticamente luego de abrir los archivos
@@ -135,6 +133,7 @@ def iniciar_reproduccion():
 
 def iniciar():
     pygame.mixer.music.unpause()
+    ventana.after(100, iniciar_reproduccion)
 
 
 def adelantar():
@@ -199,15 +198,17 @@ def continuar():
 
 
 def fun_venta():
-    global archivo, duracion
+    global archivo, duracion, archivos
     stop()
     venta(archivo, duracion)
+    archivos[0].remove()
 
 
 def fun_no_venta():
-    global archivo, duracion
+    global archivo, duracion, archivos
     stop()
     no_venta(archivo, duracion)
+    archivos[0].remove()
 
 
 """def modificar_tiempo_transcurrido(segundos):
