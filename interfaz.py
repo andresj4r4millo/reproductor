@@ -9,7 +9,7 @@ from pydub import AudioSegment
 #from ctypes import cast, POINTER
 #from comtypes import CLSCTX_ALL
 #from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-from logica import *
+from logica import venta, mover, no_venta
 import os
 import shutil
 import time
@@ -52,7 +52,7 @@ def inicializacion():
             # print(f"llamada_actual: {llamada_actual}")
 
     # iniciar reproduccion automaticamente luego de abrir los archivos
-    pygame.mixer.music.load(llamada_actual)
+    pygame.mixer.music.load(f"carpeta_cargue/{llamada_actual}")
 
     global stime
     pygame.mixer.music.play()
@@ -201,16 +201,12 @@ def continuar():
 
 def fun_venta():
     
-    global  archivos, carpeta_cargue, log
+    global  archivos, carpeta_cargue
 
-    duracion=log
-    duracion_min = duracion // 60 
-    duracion2_seg = (duracion % 60)
-    duracion_seg=str(duracion2_seg).rjust(2,"0")
-    duraciont=(f"{duracion_min}{duracion_seg}")
     stop()
-    venta(duraciont, archivos,carpeta_cargue)
+    venta( archivos,carpeta_cargue)
     llamadas=os.listdir(carpeta_cargue)
+    return
     mover(llamadas)
     print(archivos)
 
@@ -222,15 +218,13 @@ def fun_venta():
 
 
 def fun_no_venta():
-    global  archivos, carpeta_cargue,log
+    global  archivos, carpeta_cargue
 
-    duracion=log
-    duracion_min = duracion // 60 
-    duracion2_seg = (duracion % 60)
-    duracion_seg=str(duracion2_seg).rjust(2,"0")
-    duraciont=(f"{duracion_min}{duracion_seg}")
+
+    
+
     stop()
-    no_venta(duraciont, archivos,carpeta_cargue)
+    no_venta( archivos,carpeta_cargue)
     llamadas=os.listdir(carpeta_cargue)
     mover(llamadas)
     archivos.pop(0)

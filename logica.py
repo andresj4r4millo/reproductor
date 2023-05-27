@@ -7,11 +7,19 @@ from pydub import AudioSegment
 
 
 
-def venta(duraciont, archivos, carpeta_cargue):
+def venta(archivos, carpeta_cargue):
     global nuevo_nombre
     archivo=archivos[0]
 
     ruta_archivo_antes=os.path.join(carpeta_cargue, archivo)
+    audio=MP3(ruta_archivo_antes)
+    duracion=int(audio.info.length) #duracion en segudos
+    duracion_min = duracion // 60 #retorna minuos como entero
+    duracion2_seg = (duracion % 60)
+    duracion_seg=str(duracion2_seg).rjust(2,"0")
+    #duracion = MP3(ruta_archivo_antes).info
+    print(duracion_seg)
+    duraciont=(f"{duracion_min}{duracion_seg}") #
 
     nombre_audio , extencion =os.path.splitext(os.path.basename(ruta_archivo_antes))
 
@@ -46,20 +54,27 @@ def venta(duraciont, archivos, carpeta_cargue):
     ruta_archivo_despues=os.path.join(carpeta_cargue, nuevo_nombre)
     #renombrar
 
-    print(ruta_archivo_antes)
+    #print(ruta_archivo_antes)
     print(ruta_archivo_despues)
+    return
     os.rename(ruta_archivo_antes ,ruta_archivo_despues)
     # enviar a carpeta exporte
 
 
 
-def no_venta(duraciont, archivos, carpeta_cargue):
+def no_venta( archivos, carpeta_cargue):
     global nuevo_nombre
     archivo=archivos[0]
 
     ruta_archivo_antes=os.path.join(carpeta_cargue, archivo)
-
-
+    audio=MP3(ruta_archivo_antes)
+    duracion=int(audio.info.length) #input en segudos
+    duracion_min = duracion // 60 #retorna minuos
+    duracion2_seg = (duracion % 60)#multiplicar por 60
+    #duracion = MP3(ruta_archivo_antes).info
+    
+    duracion_seg=str(duracion2_seg).rjust(2,"0")
+    duraciont=(f"{duracion_min}{duracion_seg}")
     nombre_audio , extencion =os.path.splitext(os.path.basename(ruta_archivo_antes))
 
     listan=nombre_audio.split("_")
@@ -100,7 +115,4 @@ def mover(llamadas):
     llamada=llamadas[0]
     ruta_archivo_antes=os.path.join('carpeta_cargue', llamada)
     ruta_archivo_destino = os.path.join('carpeta_destino', llamada)
-    print
     shutil.move(ruta_archivo_antes, ruta_archivo_destino)
-    
-    
