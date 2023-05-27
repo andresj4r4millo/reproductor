@@ -5,13 +5,8 @@ from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage
 import pygame
 import random
 import mutagen
-from pydub import AudioSegment
-#from ctypes import cast, POINTER
-#from comtypes import CLSCTX_ALL
-#from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from logica import venta, mover, no_venta
 import os
-import shutil
 import time
 
 carpeta_cargue = 'carpeta_cargue'
@@ -20,15 +15,9 @@ stime = None
 
 pygame.mixer.init(frequency=44100)
 
-
-#pygame.mixer.Sound(speed_change(sound, 0.5).raw_data()).play()
-#no funciona para reproducir x2
-#pygame.mixer.init(frequency=88200)
-
 llamada_actual = ""
 archivos = ""
 duracion = ""
-
 
 # comandos - funciones
 def actualizar_etiqueta(etiqueta):
@@ -99,9 +88,6 @@ def iniciar_reproduccion():
     time = pygame.mixer.music.get_pos()
     x = int(int(time) * 0.001)
     tiempo["value"] = x  # posicion de la llamada
-
-    y = 0.5
-    pygame.mixer.music.set_volume(y)
 
     audio = mutagen.File(f"{carpeta_cargue}/{llamada_actual}")
     log = audio.info.length
@@ -183,6 +169,7 @@ def detener_efecto():
 def stop():
     global actualizar
     pygame.mixer.music.stop()
+    pygame.mixer.music.unload()
     ventana.after_cancel(actualizar)
     detener_efecto()
 
@@ -200,46 +187,24 @@ def continuar():
 
 
 def fun_venta():
-    
     global  archivos, carpeta_cargue
-
     stop()
     venta( archivos,carpeta_cargue)
     llamadas=os.listdir(carpeta_cargue)
-    return
     mover(llamadas)
-    print(archivos)
-
     archivos.pop(0)
     llamadas.pop(0)
-    print(archivos)
-    stop()
-
-
+    inicializacion()
 
 def fun_no_venta():
     global  archivos, carpeta_cargue
-
-
-    
-
     stop()
-    no_venta( archivos,carpeta_cargue)
+    no_venta(archivos,carpeta_cargue)
     llamadas=os.listdir(carpeta_cargue)
     mover(llamadas)
     archivos.pop(0)
     llamadas.pop(0)
-    stop()
-
-
-"""def modificar_tiempo_transcurrido(segundos):
-	for segundos in range(segundos):
-		minutos, segundos = divmod(segundos, 60)
-		horas, minutos = divmod(minutos, 60)
-		tiempo_formateado = "{:02d}:{:02d}:{:02d}".format(horas, minutos, segundos)
-		tiempo_transcurrido["text"] = tiempo_formateado
-		time.sleep(1)"""
-
+    inicializacion()
 
 ventana = Tk()
 ventana.title("Reproductor de Musica")
@@ -419,11 +384,6 @@ atras.grid(column=5, row=2, pady=10)
 adelante = Button(frame2, image=imagen7, bg="green", command=adelantar)
 adelante.grid(column=6, row=2, pady=10)
 
-# btn volumen
-volumen = ttk.Scale(
-    frame2, to=10, from_=0, orient="horizontal", length=90, style="Horizontal.TScale"
-)
-volumen.grid(column=7, row=2)
 
 inicializacion()
 ventana.mainloop()

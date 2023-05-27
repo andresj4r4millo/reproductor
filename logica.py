@@ -53,10 +53,7 @@ def venta(archivos, carpeta_cargue):
     nuevo_nombre=f"{fecha}_{hora}_{duraciont}_{cel}_{cedu}_{complemento}_{campañat}{extencion}"
     ruta_archivo_despues=os.path.join(carpeta_cargue, nuevo_nombre)
     #renombrar
-
-    #print(ruta_archivo_antes)
-    print(ruta_archivo_despues)
-    return
+    #here
     os.rename(ruta_archivo_antes ,ruta_archivo_despues)
     # enviar a carpeta exporte
 
