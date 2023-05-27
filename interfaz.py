@@ -5,15 +5,17 @@ from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage
 import pygame
 import random
 import mutagen
-from ctypes import cast, POINTER
-from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
-from logica import venta, no_venta
+from pydub import AudioSegment
+#from ctypes import cast, POINTER
+#from comtypes import CLSCTX_ALL
+#from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from logica import *
 import os
+import shutil
 import time
 
-
-carpeta_cargue = "carpeta_cargue"
+carpeta_cargue = 'carpeta_cargue'
+carpeta_destino='carpeta_destino'
 stime = None
 
 pygame.mixer.init(frequency=44100)
@@ -66,7 +68,7 @@ for i in range(50, 200, 10):
 
 
 def iniciar_reproduccion():
-    global llamada_actual, pos, n, actualizar, archivos
+    global llamada_actual, pos, n, actualizar, archivos, log
     barra1["value"] = random.choice(lista)
     barra2["value"] = random.choice(lista)
     barra3["value"] = random.choice(lista)
@@ -198,19 +200,41 @@ def continuar():
 
 
 def fun_venta():
-    global archivo, duracion, archivos
+    
+    global  archivos, carpeta_cargue, log
 
-    venta(archivos, duracion)
-    archivos[0].remove()
+    duracion=log
+    duracion_min = duracion // 60 
+    duracion2_seg = (duracion % 60)
+    duracion_seg=str(duracion2_seg).rjust(2,"0")
+    duraciont=(f"{duracion_min}{duracion_seg}")
+    stop()
+    venta(duraciont, archivos,carpeta_cargue)
+    llamadas=os.listdir(carpeta_cargue)
+    mover(llamadas)
+    print(archivos)
+
+    archivos.pop(0)
+    llamadas.pop(0)
+    print(archivos)
     stop()
 
 
 
 def fun_no_venta():
-    global archivo, duracion, archivos
+    global  archivos, carpeta_cargue,log
 
-    no_venta(archivos, duracion)
-    archivos[0].remove()
+    duracion=log
+    duracion_min = duracion // 60 
+    duracion2_seg = (duracion % 60)
+    duracion_seg=str(duracion2_seg).rjust(2,"0")
+    duraciont=(f"{duracion_min}{duracion_seg}")
+    stop()
+    no_venta(duraciont, archivos,carpeta_cargue)
+    llamadas=os.listdir(carpeta_cargue)
+    mover(llamadas)
+    archivos.pop(0)
+    llamadas.pop(0)
     stop()
 
 
