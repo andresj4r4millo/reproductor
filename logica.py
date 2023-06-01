@@ -17,8 +17,6 @@ def venta(archivos, carpeta_cargue):
     duracion_min = duracion // 60 #retorna minuos como entero
     duracion2_seg = (duracion % 60)
     duracion_seg=str(duracion2_seg).rjust(2,"0")
-    #duracion = MP3(ruta_archivo_antes).info
-    print(duracion_seg)
     duraciont=(f"{duracion_min}{duracion_seg}") #
 
     nombre_audio , extencion =os.path.splitext(os.path.basename(ruta_archivo_antes))
@@ -103,8 +101,6 @@ def no_venta( archivos, carpeta_cargue):
     nuevo_nombre=f"{fecha}_{hora}_{duraciont}_{cel}_{cedu}_{complemento}_{campañat}{extencion}"
     ruta_archivo_despues=os.path.join('carpeta_cargue', nuevo_nombre)
     #renombrar
-    print(ruta_archivo_antes)
-    print(ruta_archivo_despues)
     os.rename(ruta_archivo_antes,ruta_archivo_despues)
     # enviar a carpeta exporte
 
