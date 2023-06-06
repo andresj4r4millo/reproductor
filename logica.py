@@ -1,11 +1,6 @@
 import os
 import shutil
 from mutagen.mp3 import MP3
-from pydub import AudioSegment
-
-
-
-
 
 def venta(archivos, carpeta_cargue):
     global nuevo_nombre
@@ -55,8 +50,6 @@ def venta(archivos, carpeta_cargue):
     os.rename(ruta_archivo_antes ,ruta_archivo_despues)
     # enviar a carpeta exporte
 
-
-
 def no_venta( archivos, carpeta_cargue):
     global nuevo_nombre
     archivo=archivos[0]
@@ -104,8 +97,8 @@ def no_venta( archivos, carpeta_cargue):
     os.rename(ruta_archivo_antes,ruta_archivo_despues)
     # enviar a carpeta exporte
 
-def mover(llamadas):
+def mover(llamadas, carpeta_destino='carpeta_destino'):
     llamada=llamadas[0]
     ruta_archivo_antes=os.path.join('carpeta_cargue', llamada)
-    ruta_archivo_destino = os.path.join('carpeta_destino', llamada)
+    ruta_archivo_destino = os.path.join(carpeta_destino, llamada)
     shutil.move(ruta_archivo_antes, ruta_archivo_destino)

@@ -6,6 +6,7 @@ from logica import venta, mover, no_venta
 import os
 import time
 import vlc
+import keyboard
 
 # ---------------------------------------------- INICIALIZACION DE VARIABLES ----------------------------------------------
 carpeta_cargue = 'carpeta_cargue'
@@ -20,18 +21,50 @@ duracion = ""
 
 # ---------------------------------------------- FUNCIONES ----------------------------------------------
 
+# Funciones de teclado
+
+def on_key(event):
+    print(event.name)
+    if event.name == "flecha izquierda":
+        atrasar(30000)
+    elif event.name == "flecha derecha":
+        adelantar(30000)
+    elif event.name == "space":
+        if reproductor.is_playing():
+            pausar()
+        else:
+            reanudar()
+
+keyboard.on_press(on_key)
+
+# Fin funciones de teclado
+
+def fun_no_aplica():
+    global  carpeta_cargue
+    stop()
+    llamadas=os.listdir(carpeta_cargue)
+    mover(llamadas, "no_aplica")
+    archivos.pop(0)
+    llamadas.pop(0)
+    inicializacion()
+
 def reproducir_rapidamente():
     reproductor.set_rate(1.5)
 
 def reproducir_normalmente():
     reproductor.set_rate(1)
 
-def actualizar_etiqueta_tiempo_llamada():
+def funcion_actualizar_tiempo():
     global actualizar_tiempo_llamada
-    transcurrido = reproductor.get_time() / 1000
-    minutos, segundos = divmod(transcurrido, 60)
+    transcurrido = reproductor.get_time()
+    minutos, segundos = divmod(transcurrido / 1000, 60)
     tiempo_transcurrido.config(text=f"{int(minutos):02d}:{int(segundos):02d}")
-    actualizar_tiempo_llamada = tiempo_transcurrido.after(1000, actualizar_etiqueta_tiempo_llamada)
+
+    #actualizar barra de tiempo horizontal    
+    x = int(int(transcurrido) * 0.001)
+    tiempo["value"] = x  # posicion de la llamada
+
+    actualizar_tiempo_llamada = tiempo_transcurrido.after(1000, funcion_actualizar_tiempo)
 
 def inicializacion():
     global llamada_actual, pos, carpeta_cargue, reproductor, archivos, archivo, stime
@@ -53,7 +86,7 @@ def inicializacion():
     stime = time.time()
     #reproductor.get_instance()
     iniciar_reproduccion()
-    actualizar_etiqueta_tiempo_llamada()
+    funcion_actualizar_tiempo()
 
 
 lista = []
@@ -61,38 +94,13 @@ for i in range(50, 200, 10):
     lista.append(i)
 
 def iniciar_reproduccion():
-    global llamada_actual, pos, n, actualizar_barras, archivos, log, reproductor, stime, actualizar_tiempo_llamada
-
-    barra1["value"] = random.choice(lista)
-    barra2["value"] = random.choice(lista)
-    barra3["value"] = random.choice(lista)
-    barra4["value"] = random.choice(lista)
-    barra5["value"] = random.choice(lista)
-    barra6["value"] = random.choice(lista)
-    barra7["value"] = random.choice(lista)
-    barra8["value"] = random.choice(lista)
-    barra9["value"] = random.choice(lista)
-    barra10["value"] = random.choice(lista)
-    barra11["value"] = random.choice(lista)
-    barra12["value"] = random.choice(lista)
-    barra13["value"] = random.choice(lista)
-    barra14["value"] = random.choice(lista)
-    barra15["value"] = random.choice(lista)
-    barra16["value"] = random.choice(lista)
-    barra17["value"] = random.choice(lista)
-    barra18["value"] = random.choice(lista)
-    barra19["value"] = random.choice(lista)
-    barra20["value"] = random.choice(lista)
+    global llamada_actual, pos, n, archivos, log, reproductor, stime, actualizar_tiempo_llamada, duracion
 
     llamada_actual = archivos[pos]
 
     nombre_llamada = llamada_actual.split("/")
     nombre_llamada = nombre_llamada[-1]
     nombre["text"] = nombre_llamada
-
-    time = reproductor.get_time()
-    x = int(int(time) * 0.001)
-    tiempo["value"] = x  # posicion de la llamada
 
     audio = mutagen.File(f"{carpeta_cargue}/{llamada_actual}")
     log = audio.info.length
@@ -106,26 +114,69 @@ def iniciar_reproduccion():
     segundos = str(segundos).rjust(2, "0")
 
     tiempo_total["text"] = str(minutos) + ":" + str(segundos)
-    global duracion
     duracion = tiempo_total["text"]
 
-    actualizar_barras = ventana.after(100, iniciar_reproduccion)
+    funcion_actualizar_barras()
+
+
+def funcion_actualizar_barras():
+    global actualizar_barras
+
+    if reproductor.is_playing():
+        barra1["value"] = random.choice(lista)
+        barra2["value"] = random.choice(lista)
+        barra3["value"] = random.choice(lista)
+        barra4["value"] = random.choice(lista)
+        barra5["value"] = random.choice(lista)
+        barra6["value"] = random.choice(lista)
+        barra7["value"] = random.choice(lista)
+        barra8["value"] = random.choice(lista)
+        barra9["value"] = random.choice(lista)
+        barra10["value"] = random.choice(lista)
+        barra11["value"] = random.choice(lista)
+        barra12["value"] = random.choice(lista)
+        barra13["value"] = random.choice(lista)
+        barra14["value"] = random.choice(lista)
+        barra15["value"] = random.choice(lista)
+        barra16["value"] = random.choice(lista)
+        barra17["value"] = random.choice(lista)
+        barra18["value"] = random.choice(lista)
+        barra19["value"] = random.choice(lista)
+        barra20["value"] = random.choice(lista)
+    else:
+        detener_efecto()
+    
+    actualizar_barras = ventana.after(100, funcion_actualizar_barras)
 
 def reanudar():
-    global reproductor
+    if reproductor.is_playing():
+        return
+     
+    global actualizar_barras
+
+    if reproductor.get_state() == vlc.State.Ended:
+        ventana.after_cancel(actualizar_barras)
+        reproductor.stop()
+        reproductor.play()
+        funcion_actualizar_tiempo()
+        ventana.after(100, funcion_actualizar_barras)
+        return
+
     reproductor.play()
-    actualizar_etiqueta_tiempo_llamada()
-    ventana.after(100, iniciar_reproduccion)
+    funcion_actualizar_tiempo()
+    ventana.after(100, funcion_actualizar_barras)
 
-def adelantar():
-    transcurrido = reproductor.get_time()
-    nuevo_tiempo = transcurrido + 5000
-    reproductor.set_time(nuevo_tiempo)
+def adelantar(milisegundos = 5000):
+    if reproductor.is_playing():
+        transcurrido = reproductor.get_time()
+        nuevo_tiempo = transcurrido + milisegundos
+        reproductor.set_time(nuevo_tiempo)
 
-def atrasar():
-    transcurrido = reproductor.get_time()
-    nuevo_tiempo = transcurrido - 5000
-    reproductor.set_time(nuevo_tiempo)
+def atrasar(milisegundos = 5000):
+    if reproductor.is_playing():
+        transcurrido = reproductor.get_time()
+        nuevo_tiempo = transcurrido - milisegundos
+        reproductor.set_time(nuevo_tiempo)
 
 def detener_efecto():
     barra1["value"] = 50
@@ -157,10 +208,12 @@ def stop():
 
 def pausar():
     global actualizar_barras, reproductor, actualizar_tiempo_llamada
-    reproductor.pause()
-    ventana.after_cancel(actualizar_barras)
-    tiempo_transcurrido.after_cancel(actualizar_tiempo_llamada)
-    detener_efecto()
+    
+    if reproductor.is_playing():
+        reproductor.pause()
+        ventana.after_cancel(actualizar_barras)
+        tiempo_transcurrido.after_cancel(actualizar_tiempo_llamada)
+        detener_efecto()
 
 def fun_venta():
     global  archivos, carpeta_cargue
@@ -329,6 +382,7 @@ imagen9 = PhotoImage(file="iconos/venta.png")
 imagen10 = PhotoImage(file="iconos/no_venta.png")
 imagen11 = PhotoImage(file="iconos/rapida.png")
 imagen12 = PhotoImage(file="iconos/normal.png")
+imagen13 = PhotoImage(file="iconos/no_aplica.png")
 
 # btn iniciar
 boton2 = Button(frame2, image=imagen2, bg="#1d50aa", command=reanudar)
@@ -347,23 +401,32 @@ boton_venta = Button(
 )
 boton_venta.grid(column=2, row=2, pady=10, sticky="ew")
 
+# btn no aplica
+boton_venta = Button(
+    frame2,
+    image=imagen13,
+    bg="#1d50aa",
+    command=fun_no_aplica
+)
+boton_venta.grid(column=3, row=2, pady=10, sticky="ew")
+
 # no venta
 boton_no_venta = Button(frame2, image=imagen10, bg="#1d50aa", command=fun_no_venta)
-boton_no_venta.grid(column=3, row=2, pady=10, sticky="ew")
+boton_no_venta.grid(column=4, row=2, pady=10, sticky="ew")
 
 # btn atras
 atras = Button(frame2, image=imagen8, bg="#1d50aa", command=atrasar)
-atras.grid(column=4, row=2, pady=10, sticky="ew")
+atras.grid(column=5, row=2, pady=10, sticky="ew")
 
 # btn adelantar
 adelante = Button(frame2, image=imagen7, bg="#1d50aa", command=adelantar)
-adelante.grid(column=5, row=2, pady=10, sticky="ew")
+adelante.grid(column=6, row=2, pady=10, sticky="ew")
 
 reproduccion_normal = Button(frame2, image=imagen12, bg="#1d50aa", command=reproducir_normalmente)
-reproduccion_normal.grid(column=6, row=2, pady=10, sticky="ew")
+reproduccion_normal.grid(column=7, row=2, pady=10, sticky="ew")
 
 reproduccion_rapida = Button(frame2, image=imagen11, bg="#1d50aa", command=reproducir_rapidamente)
-reproduccion_rapida.grid(column=7, row=2, pady=10, columnspan=2, sticky="ew")
+reproduccion_rapida.grid(column=8, row=2, pady=10, sticky="ew")
 
 inicializacion()
 ventana.mainloop()
