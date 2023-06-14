@@ -1,5 +1,5 @@
 # ---------------------------------------------- IMPORTACION DE LIBRERIAS ----------------------------------------------
-from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage
+from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage, messagebox, Toplevel
 import random
 import mutagen
 from logica import venta, mover, no_venta
@@ -7,6 +7,7 @@ import os
 import time
 import vlc
 import keyboard
+from conversor import convertir_llamadas
 
 # ---------------------------------------------- INICIALIZACION DE VARIABLES ----------------------------------------------
 carpeta_cargue = 'carpeta_cargue'
@@ -21,10 +22,14 @@ duracion = ""
 
 # ---------------------------------------------- FUNCIONES ----------------------------------------------
 
-# Funciones de teclado
+def mostrar_ventana_modal():
+    # Crear la ventana modal
+    # Mostrar un mensaje en la ventana modal
+    mensaje = "Convirtiendo archivos gsm a mp3. Espera por favor."
+    messagebox.showinfo("Mensaje", mensaje)
 
+# Funciones de teclado para adelantar y atrasar la llamada 30 segundos y para pausar y reanudarla
 def on_key(event):
-    print(event.name)
     if event.name == "flecha izquierda":
         atrasar(30000)
     elif event.name == "flecha derecha":
@@ -37,8 +42,7 @@ def on_key(event):
 
 keyboard.on_press(on_key)
 
-# Fin funciones de teclado
-
+#función que se ejecuta cuando se presiona el botón de "no aplica"
 def fun_no_aplica():
     global  carpeta_cargue
     stop()
@@ -54,6 +58,7 @@ def reproducir_rapidamente():
 def reproducir_normalmente():
     reproductor.set_rate(1)
 
+#función que se  encarga de actualizar el segundo actual de la llamada
 def funcion_actualizar_tiempo():
     global actualizar_tiempo_llamada
     transcurrido = reproductor.get_time()
@@ -66,6 +71,7 @@ def funcion_actualizar_tiempo():
 
     actualizar_tiempo_llamada = tiempo_transcurrido.after(1000, funcion_actualizar_tiempo)
 
+#selecciona la primera llamada de la carpeta de cargue y la reproduce
 def inicializacion():
     global llamada_actual, pos, carpeta_cargue, reproductor, archivos, archivo, stime
     pos = 0
@@ -84,7 +90,6 @@ def inicializacion():
     reproductor = vlc.MediaPlayer(f"file:///carpeta_cargue/{llamada_actual}")
     reproductor.play()
     stime = time.time()
-    #reproductor.get_instance()
     iniciar_reproduccion()
     funcion_actualizar_tiempo()
 
@@ -93,6 +98,7 @@ lista = []
 for i in range(50, 200, 10):
     lista.append(i)
 
+#define el nombre de la llamada y el tiempo total de la llamada para mostrarlo en la interfaz 
 def iniciar_reproduccion():
     global llamada_actual, pos, n, archivos, log, reproductor, stime, actualizar_tiempo_llamada, duracion
 
@@ -118,7 +124,7 @@ def iniciar_reproduccion():
 
     funcion_actualizar_barras()
 
-
+#se encarga de renderizar la animación de las barras cuando una llamada se está reproduciendo
 def funcion_actualizar_barras():
     global actualizar_barras
 
@@ -148,6 +154,7 @@ def funcion_actualizar_barras():
     
     actualizar_barras = ventana.after(100, funcion_actualizar_barras)
 
+#reanuda la reproduccion
 def reanudar():
     if reproductor.is_playing():
         return
@@ -178,6 +185,7 @@ def atrasar(milisegundos = 5000):
         nuevo_tiempo = transcurrido - milisegundos
         reproductor.set_time(nuevo_tiempo)
 
+#detiene la animación de las barras
 def detener_efecto():
     barra1["value"] = 50
     barra2["value"] = 60
@@ -215,6 +223,7 @@ def pausar():
         tiempo_transcurrido.after_cancel(actualizar_tiempo_llamada)
         detener_efecto()
 
+#se ejecuta cuando se presiona el botón que clasifica una llamada como venta
 def fun_venta():
     global  archivos, carpeta_cargue
     stop()
@@ -225,6 +234,7 @@ def fun_venta():
     llamadas.pop(0)
     inicializacion()
 
+#se ejecuta cuando se presiona el botón que clasifica una llamada como "no venta"
 def fun_no_venta():
     global  archivos, carpeta_cargue
     stop()
@@ -235,7 +245,7 @@ def fun_no_venta():
     llamadas.pop(0)
     inicializacion()
 
-# ---------------------------------------------- MAQUETACION ----------------------------------------------
+# ---------------------------------------------- DISEÑO DE INTERFAZ ----------------------------------------------
 ventana = Tk()
 ventana.title("Reproductor de Musica")
 ventana.iconbitmap("iconos/icono.ico")
@@ -259,6 +269,7 @@ frame1.grid(column=0, row=0, sticky="nsew")
 frame2 = Frame(ventana, bg="black", width=600, height=50)
 frame2.grid(column=0, row=1, sticky="nsew")
 
+#barras para la animación de reproducción
 barra1 = ttk.Progressbar(
     frame1, orient="vertical", length=300, maximum=300, style="Vertical.TProgressbar"
 )  # ,takefocus=True mode='determinate',
@@ -340,6 +351,7 @@ barra20 = ttk.Progressbar(
 )
 barra20.grid(column=19, row=0, padx=1)
 
+#estilos de la barra de progreso horizontal
 estilo1 = ttk.Style()
 estilo1.theme_use("clam")
 estilo1.configure(
@@ -368,12 +380,13 @@ tiempo_transcurrido.grid(row=0, column=7)
 tiempo_total = Label(frame2, bg="black", fg="orange", width=5)
 tiempo_total.grid(row=0, column=8)
 
+#elemento que muestra el nombre de la llamada
 nombre = Label(frame2, bg="black", fg="red", width=55)
 nombre.grid(column=0, row=1, columnspan=8, padx=5)
 cantidad = Label(frame2, bg="black", fg="green2")
 cantidad.grid(column=8, row=1)
 
-# iconos
+# iconos de la interfaz
 imagen2 = PhotoImage(file="iconos/play.png")
 imagen3 = PhotoImage(file="iconos/pausa.png")
 imagen7 = PhotoImage(file="iconos/adelante.png")
@@ -384,15 +397,15 @@ imagen11 = PhotoImage(file="iconos/rapida.png")
 imagen12 = PhotoImage(file="iconos/normal.png")
 imagen13 = PhotoImage(file="iconos/no_aplica.png")
 
-# btn iniciar
+# botón iniciar
 boton2 = Button(frame2, image=imagen2, bg="#1d50aa", command=reanudar)
 boton2.grid(column=0, row=2, pady=10, sticky="ew")
 
-# btn pausar
+# botón pausar
 boton3 = Button(frame2, image=imagen3, bg="#1d50aa", command=pausar)
 boton3.grid(column=1, row=2, pady=10, sticky="ew")
 
-# btn venta
+# botón venta
 boton_venta = Button(
     frame2,
     image=imagen9,
@@ -401,7 +414,7 @@ boton_venta = Button(
 )
 boton_venta.grid(column=2, row=2, pady=10, sticky="ew")
 
-# btn no aplica
+# botón no aplica
 boton_venta = Button(
     frame2,
     image=imagen13,
@@ -414,19 +427,25 @@ boton_venta.grid(column=3, row=2, pady=10, sticky="ew")
 boton_no_venta = Button(frame2, image=imagen10, bg="#1d50aa", command=fun_no_venta)
 boton_no_venta.grid(column=4, row=2, pady=10, sticky="ew")
 
-# btn atras
+# botón atras
 atras = Button(frame2, image=imagen8, bg="#1d50aa", command=atrasar)
 atras.grid(column=5, row=2, pady=10, sticky="ew")
 
-# btn adelantar
+# botón adelantar
 adelante = Button(frame2, image=imagen7, bg="#1d50aa", command=adelantar)
 adelante.grid(column=6, row=2, pady=10, sticky="ew")
 
+#botón de reproducción normal o velocidad estandar
 reproduccion_normal = Button(frame2, image=imagen12, bg="#1d50aa", command=reproducir_normalmente)
 reproduccion_normal.grid(column=7, row=2, pady=10, sticky="ew")
 
+#botón de reproducción rápida
 reproduccion_rapida = Button(frame2, image=imagen11, bg="#1d50aa", command=reproducir_rapidamente)
 reproduccion_rapida.grid(column=8, row=2, pady=10, sticky="ew")
 
+mostrar_ventana_modal()
+convertir_llamadas()
 inicializacion()
+
+#muestra la interfaz del reproductor
 ventana.mainloop()

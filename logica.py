@@ -2,6 +2,7 @@ import os
 import shutil
 from mutagen.mp3 import MP3
 
+#Esta función se ejecuta cuando se presiona el botón que clasifica una llamada como VENTA dentro de la interfaz del reproductor
 def venta(archivos, carpeta_cargue):
     global nuevo_nombre
     archivo=archivos[0]
@@ -50,16 +51,16 @@ def venta(archivos, carpeta_cargue):
     os.rename(ruta_archivo_antes ,ruta_archivo_despues)
     # enviar a carpeta exporte
 
+#Esta función se ejecuta cuando se presiona el botón que clasifica una llamada como NO VENTA dentro de la interfaz del reproductor
 def no_venta( archivos, carpeta_cargue):
     global nuevo_nombre
     archivo=archivos[0]
-
+    
     ruta_archivo_antes=os.path.join(carpeta_cargue, archivo)
     audio=MP3(ruta_archivo_antes)
     duracion=int(audio.info.length) #input en segudos
     duracion_min = duracion // 60 #retorna minuos
     duracion2_seg = (duracion % 60)#multiplicar por 60
-    #duracion = MP3(ruta_archivo_antes).info
     
     duracion_seg=str(duracion2_seg).rjust(2,"0")
     duraciont=(f"{duracion_min}{duracion_seg}")
@@ -97,6 +98,7 @@ def no_venta( archivos, carpeta_cargue):
     os.rename(ruta_archivo_antes,ruta_archivo_despues)
     # enviar a carpeta exporte
 
+#Esta función se encarga de mover las llamadas de la carpeta de cargue a la carpeta de destino
 def mover(llamadas, carpeta_destino='carpeta_destino'):
     llamada=llamadas[0]
     ruta_archivo_antes=os.path.join('carpeta_cargue', llamada)
