@@ -6,7 +6,6 @@ from logica import venta, mover, no_venta
 import os
 import time
 import vlc
-from pynput import keyboard
 from conversor import convertir_llamadas
 
 # ---------------------------------------------- INICIALIZACION DE VARIABLES ----------------------------------------------
@@ -27,23 +26,6 @@ def mostrar_ventana_modal():
     # Mostrar un mensaje en la ventana modal
     mensaje = "Convirtiendo archivos gsm a mp3. Espera por favor."
     messagebox.showinfo("Mensaje", mensaje)
-
-
-
-# Funciones de teclado 
-# para adelantar y atrasar la llamada 30 segundos y para pausar y reanudarla
-# def on_key(event):
-#     print(event)
-#     if event.name == "flecha izquierda":
-#         atrasar(30000)
-#     elif event.name == "flecha derecha":
-#         adelantar(30000)
-#     elif event.name == "space":
-#         if reproductor.is_playing():
-#             pausar()
-#         else:
-#             reanudar()
-# keyboard.hook(on_key)
 
 def key_pressed(event):
     if event.widget.focus_get() == event.widget:

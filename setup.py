@@ -4,6 +4,6 @@ from cx_Freeze import setup, Executable
 setup(
     name="Ejecutable",
     version="1.0",
-    description="Descripción",
-    executables=[Executable("interfaz.py")]
+    description="Reproductor OneContact",
+    executables=[Executable("interfaz.py", icon="icono.ico")]
 )
