@@ -1,12 +1,12 @@
 # ---------------------------------------------- IMPORTACION DE LIBRERIAS ----------------------------------------------
-from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage, messagebox, Toplevel
+from tkinter import Button, Label, Tk, ttk, Frame, PhotoImage, messagebox
 import random
 import mutagen
 from logica import venta, mover, no_venta
 import os
 import time
 import vlc
-import keyboard
+from pynput import keyboard
 from conversor import convertir_llamadas
 
 # ---------------------------------------------- INICIALIZACION DE VARIABLES ----------------------------------------------
@@ -28,19 +28,35 @@ def mostrar_ventana_modal():
     mensaje = "Convirtiendo archivos gsm a mp3. Espera por favor."
     messagebox.showinfo("Mensaje", mensaje)
 
-# Funciones de teclado para adelantar y atrasar la llamada 30 segundos y para pausar y reanudarla
-def on_key(event):
-    if event.name == "flecha izquierda":
-        atrasar(30000)
-    elif event.name == "flecha derecha":
-        adelantar(30000)
-    elif event.name == "space":
-        if reproductor.is_playing():
-            pausar()
-        else:
-            reanudar()
 
-keyboard.on_press(on_key)
+
+# Funciones de teclado 
+# para adelantar y atrasar la llamada 30 segundos y para pausar y reanudarla
+# def on_key(event):
+#     print(event)
+#     if event.name == "flecha izquierda":
+#         atrasar(30000)
+#     elif event.name == "flecha derecha":
+#         adelantar(30000)
+#     elif event.name == "space":
+#         if reproductor.is_playing():
+#             pausar()
+#         else:
+#             reanudar()
+# keyboard.hook(on_key)
+
+def key_pressed(event):
+    if event.widget.focus_get() == event.widget:
+        if event.keysym == "Left":
+            atrasar(30000)
+        elif event.keysym == "Right":
+         adelantar(30000)
+        elif event.keysym == "space":
+            if reproductor.is_playing():
+             pausar()
+            else:
+             reanudar()
+
 
 #función que se ejecuta cuando se presiona el botón de "no aplica"
 def fun_no_aplica():
@@ -251,6 +267,8 @@ ventana.title("Reproductor de Musica")
 ventana.iconbitmap("iconos/icono.ico")
 ventana.config(bg="black")
 ventana.resizable(0, 0)
+ventana.bind("<Key>", key_pressed)
+
 
 estilo = ttk.Style()
 estilo.theme_use("clam")
