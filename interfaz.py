@@ -6,6 +6,7 @@ from logica import venta, mover, no_venta
 import os
 import time
 import vlc
+
 from pynput import keyboard
 from conversor import convertir_llamadas
 
