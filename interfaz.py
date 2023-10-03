@@ -4,6 +4,7 @@ import random
 import mutagen
 from logica import venta, mover, no_venta
 import os
+os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
 import time
 import vlc
 
